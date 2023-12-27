@@ -1,4 +1,5 @@
 import asyncHandler from "express-async-handler";
+import User from "../models/user.model.js";
 
 const UserController = {
 
@@ -20,9 +21,28 @@ const UserController = {
      * @access public
      */
     signUp: asyncHandler( async (req,res,next) => {
+
+        const {name,email,password} = req.body;
+
+        // check if user exits
+        const user = await User.findOne({email});
+
+        if(user){
+            return res.status(409).json({
+                success:false,
+                data:"User Alreacdy Exists"
+            })
+        }
+
+        await User.create({
+            name,
+            email,
+            password
+        })
+
         res.status(200).json({
             success:true,
-            data:"User Signup"
+            data:"User Signup Successfull"
         })
     }),
 

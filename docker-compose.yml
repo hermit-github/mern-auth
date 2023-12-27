@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+
+  # MongoDB
+  mongodb:
+    image: mongo:4
+    container_name: mongodb_mern_auth
+    volumes:
+      - ./db:/data/db
+    ports:
+      - "27017:27017" # Adjust the port if needed
