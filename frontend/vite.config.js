@@ -1,5 +1,8 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import config from './config'
+
+console.log('config', config)
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -8,7 +11,8 @@ export default defineConfig({
     port:3000,
     proxy:{
       '/api':{
-        target:process.env.NODE_BACKEND_URL
+        target:'localhost:8080',
+        changeOrigin:true
       }
     }
   }
