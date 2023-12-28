@@ -40,3 +40,19 @@ cd your-repo
 
 # Install dependencies
 npm install
+
+
+## Configuration
+
+# Create a .env file in the root directory and add your configuration variables
+PORT=3000
+DATABASE_URL=mongodb://localhost:27017/your-database
+SECRET_KEY=your_secret_key
+
+
+## Usage
+
+# Start the development server
+npm start
+
+# Access the application in your browser at http://localhost:3000
