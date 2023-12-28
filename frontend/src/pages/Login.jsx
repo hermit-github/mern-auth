@@ -1,9 +1,10 @@
 import Layout from '../components/Layout'
 import Header from '../components/Header'
+import LoginForm from '../components/LoginForm'
 
 const Login = () => {
   return (
-    <Layout headerContent={<Header/>} heroContent={<h1>Login</h1>}/>
+    <Layout headerContent={<Header/>} heroContent={<LoginForm/>}/>
   )
 }
 
