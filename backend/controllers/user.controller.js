@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/user.model.js";
+import generateToken from "../utils/generateToken.js";
 
 const UserController = {
 
@@ -9,10 +10,21 @@ const UserController = {
      * @access public
      */
     signIn: asyncHandler( async (req,res,next) => {
-        res.status(200).json({
-            success:true,
-            data:"User Signin"
-        })
+        const {email,password} = req.body;
+
+        // check if user exits
+        let user = await User.findOne({email});
+
+        if(user && (await user.matchPassword(password))){
+            generateToken(res,user._id)
+            res.status(200).json({
+                success:true,
+                data:"User Signin Successfull"
+            })
+        } else {
+            res.status(401);
+            throw new Error("User Doesn't Exist");
+        }
     }),
 
     /**
@@ -25,7 +37,7 @@ const UserController = {
         const {name,email,password} = req.body;
 
         // check if user exits
-        const user = await User.findOne({email});
+        let user = await User.findOne({email});
 
         if(user){
             return res.status(409).json({
@@ -34,16 +46,22 @@ const UserController = {
             })
         }
 
-        await User.create({
+        user = await User.create({
             name,
             email,
             password
         })
 
-        res.status(200).json({
-            success:true,
-            data:"User Signup Successfull"
-        })
+        if(user){
+            generateToken(res,user._id)
+            res.status(201).json({
+                success:true,
+                data:"User Signup Successfull"
+            })
+        } else {
+            res.status(409);
+            throw new Error("Invalid User Data");
+        }
     }),
 
     /**
@@ -52,9 +70,15 @@ const UserController = {
      * @access public
      */
     logOut: asyncHandler( async (req,res,next) => {
+
+        res.cookie('jwt',null,{
+            expires: new Date(Date.now()),
+            httpOnly:true
+        })
+
         res.status(200).json({
             success:true,
-            data:"User Logout"
+            data:"User Logged Out"
         })
     }),
 
@@ -64,9 +88,14 @@ const UserController = {
      * @access private
      */
     getUserProfile: asyncHandler( async (req,res,next) => {
+        const user = {
+            id:req.user._id,
+            name:req.user.name,
+            email:req.user.email
+        }
         res.status(200).json({
             success:true,
-            data:"User Profile"
+            data:user
         })
     }),
 
@@ -76,10 +105,28 @@ const UserController = {
      * @access private
      */
     updateUserProfile: asyncHandler( async (req,res,next) => {
-        res.status(200).json({
-            success:true,
-            data:"User Profile Update"
-        })
+        const user = await User.findById(req.user._id);
+
+        if(user){
+            user.name = req.body.name || user.name;
+            user.email = req.body.email || user.email;
+
+            const updatedUser = await user.save();
+            updatedUser.password = undefined;
+
+            return res.status(201).json({
+                success:true,
+                data:{
+                    name:updatedUser.name,
+                    email:updatedUser.email
+                }
+            })
+        } else {
+            res.status(404).json({
+                success:false,
+                message:"User Not Found"
+            })
+        }
     })
 }
 

@@ -2,7 +2,7 @@ import express from "express";
 import { notFound,errorHandler } from "./middleware/errorHandlers.js";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
-
+import helmet from "helmet";
 
 // create app instance
 const app = express();
@@ -12,6 +12,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(cookieParser());
 app.use(morgan('tiny'));
+app.use(helmet());
 
 // import routes
 import UserRouter from "./routes/user.route.js"

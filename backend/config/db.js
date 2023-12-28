@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import config from "./config.js";
 
 const connectDB = () => {
-    mongoose.connect(config.MONGO_URI)
+    return mongoose.connect(config.MONGO_URI)
             .then((conn) => {
                 console.log("Connected to MongoDB");
                 if(config.NODE_ENV !== 'production'){
