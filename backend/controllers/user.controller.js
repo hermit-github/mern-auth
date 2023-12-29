@@ -6,7 +6,7 @@ const UserController = {
 
     /**
      * @desc Auth user/set token
-     * route POST /api/user/auth
+     * route POST /api/user/signIn
      * @access public
      */
     signIn: asyncHandler( async (req,res,next) => {
