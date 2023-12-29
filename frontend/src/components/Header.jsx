@@ -1,7 +1,7 @@
 import Navbar from "react-bootstrap/Navbar";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
-import { FaSignInAlt, FaSignOutAlt } from "react-icons/fa";
+import { FaSignInAlt, FaSignOutAlt,FaClipboardList } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const Header = () => {
@@ -22,8 +22,11 @@ const Header = () => {
                 <FaSignInAlt /> Sign In
               </Nav.Link>
               <Nav.Link onClick={() => navigate("/register")}>
-                <FaSignOutAlt /> Sign Up
+                <FaClipboardList /> Sign Up
               </Nav.Link>
+              {/* <Nav.Link onClick={() => navigate("/")}>
+                <FaSignOutAlt /> Logout
+              </Nav.Link> */}
             </Nav>
           </Navbar.Collapse>
         </Container>

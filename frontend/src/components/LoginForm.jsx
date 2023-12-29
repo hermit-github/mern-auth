@@ -1,7 +1,11 @@
-import { useReducer } from "react";
+import { useReducer,useEffect } from "react";
 import FormContainer from "./FormContainer";
 import {Row,Col,Form,Button} from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
+import { useDispatch,useSelector } from "react-redux";
+import { useLoginMutation } from "../state/userApiSlice";
+import { setCredentials } from "../state/authSlice";
+import { toast } from 'react-toastify';
 
 const initialFormState = {email:"",password:""};
 const formReducer = (state,action) => {
@@ -16,19 +20,41 @@ const formReducer = (state,action) => {
 }
 
 const LoginForm = () => {
-    const [state, dispatch] = useReducer(formReducer, initialFormState);
+    const [stateLocal, dispatchLocal] = useReducer(formReducer, initialFormState);
+    const navigate = useNavigate();
+    const dispatchGlobal = useDispatch();
+
+    const [login,utl] = useLoginMutation();
+
+    const {userInfo} = useSelector((state) => state.auth);
+
+    // If User is Logged in then redirect to Home Page
+    useEffect(() => {
+        if(userInfo){
+            navigate("/");
+        }
+    },[navigate,userInfo]);
 
     const handleFieldChange = (field, value) => {
-        dispatch({ type: 'CHANGE', field, value });
+        dispatchLocal({ type: 'CHANGE', field, value });
     };
 
     const handleFormReset = () => {
-        dispatch({ type: 'RESET', initialState: initialFormState });
+        dispatchLocal({ type: 'RESET', initialState: initialFormState });
     };
 
-    const handleFormSubmit = (e) => {
+    const handleFormSubmit = async (e) => {
         e.preventDefault();
-        console.log('state', state)
+        const {email,password} = stateLocal;
+        try {
+            const res = await login({email,password}).unwrap();
+            dispatchGlobal(setCredentials({...res.data}));
+            toast.success(res.message);
+            navigate("/");
+        } catch (error) {
+            toast.error(error.message);
+        }
+
         handleFormReset();
     }
 
@@ -41,7 +67,7 @@ const LoginForm = () => {
                 <Form.Control
                     type="email"
                     placeholder="Enter email"
-                    value={state.email}
+                    value={stateLocal.email}
                     onChange={(e) => handleFieldChange("email",e.target.value)}
                     controlId="email"
                 ></Form.Control>
@@ -51,7 +77,7 @@ const LoginForm = () => {
                 <Form.Control
                     type="password"
                     placeholder="Enter password"
-                    value={state.password}
+                    value={stateLocal.password}
                     onChange={(e) => handleFieldChange("password",e.target.value)}
                     controlId="password"
                 ></Form.Control>

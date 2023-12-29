@@ -3,6 +3,7 @@ import { notFound,errorHandler } from "./middleware/errorHandlers.js";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import helmet from "helmet";
+import cors from "cors";
 
 // create app instance
 const app = express();
@@ -13,6 +14,7 @@ app.use(express.urlencoded({extended:true}));
 app.use(cookieParser());
 app.use(morgan('tiny'));
 app.use(helmet());
+app.use(cors());
 
 // import routes
 import UserRouter from "./routes/user.route.js"

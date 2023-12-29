@@ -17,9 +17,11 @@ const UserController = {
 
         if(user && (await user.matchPassword(password))){
             generateToken(res,user._id)
+            user.password = undefined;
             res.status(200).json({
                 success:true,
-                data:"User Signin Successfull"
+                data:user,
+                message:"User Login Successfull!"
             })
         } else {
             res.status(401);
